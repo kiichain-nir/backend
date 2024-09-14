@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// generator dbml {
+//   provider            = "prisma-dbml-generator"
+//   output              = "./dbml"
+//   outputName          = "seed-model.dbml"
+//   projectName         = "SEED 2.0"
+//   projectDatabaseType = "PostgreSQL"
+//   projectNote         = "SEED 2.0"
+// }
+
+// generator docs {
+//   provider = "node node_modules/prisma-docs-generator"
+//   output   = "./docs"
+// }
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model User {
+  uuid            String    @default(uuid())
+  id                Int         @id    @default(autoincrement()) @unique
+       
+  name          String
+  email         String    @unique
+  walletAddress Bytes?    @unique
+  profileImage  String?
+  roles         Role[]    @default([USER])
+  isActive      Boolean   @default(true)
+  isBlocked     Boolean   @default(false)
+  lastLoggedIn  DateTime? @default(now())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+  // projects      Project[]
+}
+
+model Project {
+  id                Int           @id @default(autoincrement())
+  uuid              String      @unique  @default(uuid())
+  name              String
+  budget            Float // Minting details handled by smart contract
+  tokenName         String
+  tokenQuantity     Float // Minting details handled by smart contract
+  tokenSymbol       String
+  rwaRepresentation String // Real World Asset Representation
+  description       String?
+  userWallet            String 
+  contractAddress   String?
+  txHash            String
+  imageUrl          String?
+  // user              User          @relation(fields: [userId], references: [id])
+  vendors           Vendor[]
+  beneficiaries     Beneficiary[]
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime?     @updatedAt
+}
+
+model Vendor {
+  id   Int    @id @default(autoincrement())
+  uuid String @default(uuid())  @unique 
+
+  name          String
+  walletAddress String    @unique
+  extras      Json?
+  email         String
+  projectUUID    String
+  project       Project   @relation(fields: [projectUUID], references: [uuid])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime? @updatedAt
+}
+
+model Beneficiary {
+  id            Int       @id @default(autoincrement())
+  uuid          String    @default(uuid()) @unique 
+  name          String
+  walletAddress String    @unique
+  email         String?
+  gender        String
+  age           Int
+  latitude      Float
+  longitude     Float
+  projectUUID    String
+  project       Project   @relation(fields: [projectUUID], references: [uuid])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime? @updatedAt
+}

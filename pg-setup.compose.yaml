@@ -1,0 +1,54 @@
+# version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14
+    restart: always
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin123
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - '5437:5432'
+    networks:
+      - platform
+
+  redis:
+    container_name: redis
+    image: bitnami/redis:latest
+    restart: always
+    ports:
+      - '6389:6379'
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    networks:
+      - platform
+
+  bull-board:
+    image: deadly0/bull-board:latest
+    restart: always
+    container_name: bull-board
+    ports:
+      - 5689:3000
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    depends_on:
+      - redis
+    networks:
+      - platform
+
+volumes:
+  pg_data:
+    external: true
+  redis_data:
+    external: true
+
+networks:
+  platform:
+    external: true
