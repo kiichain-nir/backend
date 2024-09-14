@@ -34,18 +34,18 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # Backend Image
-      - name: build && push kii-backend
-        id: build-push-kii-backend
+      - name: build && push kiichain-backend
+        id: build-push-kiichain-backend
         uses: docker/build-push-action@v5
         with:
           context: .
-          cache-from: type=gha,scope=${{ github.ref_name }}-kii-backend
-          cache-to: type=gha,mode=max,scope=${{ github.ref_name }}-kii-backend
+          cache-from: type=gha,scope=${{ github.ref_name }}-kiichain-backend
+          cache-to: type=gha,mode=max,scope=${{ github.ref_name }}-kiichain-backend
           file: Dockerfile
           push: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
           tags: | 
-            thespiritman/kiiChain-backend:${{ github.sha }}
-            thespiritman/kiiChain-backend:main
+            thespiritman/kiichain-backend:${{ github.sha }}
+            thespiritman/kiichain-backend:main
                     
       # - name: Update Docker Image Tag
       #   uses: appleboy/ssh-action@v0.1.3
@@ -56,4 +56,4 @@ jobs:
       #     key: ${{ secrets.SSH_PRIVATE_KEY }}
       #     script: |
       #       export IMAGE_TAG=${{ github.sha }}
-      #       cd /home/ubuntu/docker-projects/kiiChain/kiiChain-core && docker pull thespiritman/kiiChain-backend:$IMAGE_TAG && docker rm kii_be -f && docker compose up kii_be -d && docker image prune -f
+      #       cd /home/ubuntu/docker-projects/kiichain/kiichain-core && docker pull thespiritman/kiichain-backend:$IMAGE_TAG && docker rm kii_be -f && docker compose up kii_be -d && docker image prune -f
