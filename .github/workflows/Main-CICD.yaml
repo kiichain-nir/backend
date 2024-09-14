@@ -47,13 +47,13 @@ jobs:
             thespiritman/kiichain-backend:${{ github.sha }}
             thespiritman/kiichain-backend:main
                     
-      # - name: Update Docker Image Tag
-      #   uses: appleboy/ssh-action@v0.1.3
-      #   if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-      #   with:
-      #     host: ${{ secrets.SSH_HOST }}
-      #     username: ${{ secrets.SSH_USER }}
-      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #     script: |
-      #       export IMAGE_TAG=${{ github.sha }}
-      #       cd /home/ubuntu/docker-projects/kiichain/kiichain-core && docker pull thespiritman/kiichain-backend:$IMAGE_TAG && docker rm kii_be -f && docker compose up kii_be -d && docker image prune -f
+      - name: Update Docker Image Tag
+        uses: appleboy/ssh-action@v0.1.3
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            export IMAGE_TAG=${{ github.sha }}
+            cd /home/ubuntu/kiiChain-docker-projects/kiiChain-core && docker pull thespiritman/kiichain-backend:$IMAGE_TAG && docker rm kiichain_be -f && docker compose up kiichain_be -d && docker image prune -f
